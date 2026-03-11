@@ -1,1 +1,8 @@
-
+fastapi
+uvicorn
+torch
+transformers
+openai-whisper
+librosa
+resemblyzer
+numpy

@@ -6,3 +6,4 @@ openai-whisper
 librosa
 resemblyzer
 numpy
+soundfile

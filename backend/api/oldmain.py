@@ -45,7 +45,7 @@ async def verify_call(file: UploadFile = File(...)):
         return {
             "filename": file.filename,
             "is_fraud": is_fake,
-            "confidence": f"{confidence:.2f}%",
+            "confidence": round(confidence,2),
             "analysis": "AI Voice Detected" if is_fake else "Human Voice Verified",
             "risk_level": "HIGH" if is_fake else "LOW"
         }

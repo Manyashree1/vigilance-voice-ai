@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "expo-linear-gradient": "^55.0.8",
+    "lucide-react-native": "^0.577.0",
+    "moti": "^0.30.0",
+    "react-native-call-detection": "^1.9.0",
+    "react-native-reanimated": "^4.2.2"
+  }
+}

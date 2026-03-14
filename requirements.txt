@@ -1,8 +1,9 @@
 fastapi
 uvicorn
+python-multipart
 torch
 transformers
-openai-whisper
 librosa
-resemblyzer
 numpy
+scikit-learn
+soundfile

@@ -4,6 +4,7 @@ import os
 # Add project root to Python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
 
+from src.stress_detector import detect_stress
 
 from fastapi import FastAPI,UploadFile,File
 import shutil
@@ -35,6 +36,7 @@ async def verify_call(file: UploadFile = File(...)):
 
         # Run Deepfake detection
         label, confidence = detect_deepfake(str(temp_path))
+        stress_result = detect_stress(str(temp_path))
 
         # Delete temp file
         if temp_path.exists():
@@ -47,7 +49,10 @@ async def verify_call(file: UploadFile = File(...)):
             "is_fraud": is_fake,
             "confidence": round(confidence,2),
             "analysis": "AI Voice Detected" if is_fake else "Human Voice Verified",
-            "risk_level": "HIGH" if is_fake else "LOW"
+            "risk_level": "HIGH" if is_fake else "LOW",
+            "stress_level": stress_result["stress_level"],
+            "stress_score": stress_result["stress_score"]
+        
         }
 
     except Exception as e:

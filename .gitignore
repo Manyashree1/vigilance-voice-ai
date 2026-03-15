@@ -205,3 +205,26 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+<<<<<<< HEAD
+=======
+
+
+# --- Project Specific Hacks ---
+# AI Models (large .pkl files)
+scam_detector/models/*.pkl
+ai_models/*.pkl
+*.pkl
+
+# Datasets
+scam_detector/datasets/*.csv
+data/*.csv
+*.csv
+
+# Audio Samples (avoid bloating the repo with .wav)
+audio_samples/*.wav
+*.wav
+
+# Node.js dependencies
+node_modules/
+dist/
+>>>>>>> 2313f31 (updated backend)

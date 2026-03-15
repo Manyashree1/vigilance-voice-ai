@@ -205,8 +205,6 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
-<<<<<<< HEAD
-=======
 
 
 # --- Project Specific Hacks ---
@@ -226,5 +224,8 @@ audio_samples/*.wav
 
 # Node.js dependencies
 node_modules/
+dev-backend-sujit
 dist/
->>>>>>> 2313f31 (updated backend)
+ 2313f31 (updated backend)
+dist/
+dev

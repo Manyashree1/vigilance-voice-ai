@@ -10,7 +10,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def extract_features(audio_path):
+def extract_features(audio_path):[p]
     """Placeholder for complex audio feature extraction."""
     try:
         y, sr = librosa.load(audio_path, sr=16000)

@@ -44,6 +44,7 @@ def detect_scam_intent(text):
         "intent": "Sensitive Information Request" if contains_danger_word else top_intent,
         "confidence": score,
         "risk_level": risk_level
+    }
 from transformers import pipeline
 
 classifier = None

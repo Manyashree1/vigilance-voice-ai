@@ -1,9 +1,7 @@
 import torch
 import librosa
-import numpy as np
 from transformers import Wav2Vec2FeatureExtractor, AutoModelForAudioClassification
 
-# Load pretrained model
 MODEL_NAME = "ehcalabres/wav2vec2-lg-xlsr-en-speech-emotion-recognition"
 
 feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained(MODEL_NAME)
@@ -14,10 +12,8 @@ labels = model.config.id2label
 
 def detect_stress(audio_path):
 
-    # Load audio
     speech, sr = librosa.load(audio_path, sr=16000)
 
-    # Extract features
     inputs = feature_extractor(
         speech,
         sampling_rate=16000,
@@ -25,19 +21,28 @@ def detect_stress(audio_path):
         padding=True
     )
 
-    # Model prediction
     with torch.no_grad():
         logits = model(**inputs).logits
 
-    predicted_id = torch.argmax(logits).item()
+    probs = torch.softmax(logits, dim=1)[0]
+
+    predicted_id = torch.argmax(probs).item()
     emotion = labels[predicted_id]
 
-    confidence = torch.softmax(logits, dim=1)[0][predicted_id].item()
+    confidence = probs[predicted_id].item()
 
-    # Map emotions to stress
+    # Stress mapping
     if emotion in ["angry", "fear", "disgust"]:
-        level = "HIGH"
+        stress_score = confidence
     elif emotion in ["sad"]:
+        stress_score = confidence * 0.6
+    else:
+        stress_score = confidence * 0.3
+
+    # Stress level thresholds
+    if stress_score > 0.7:
+        level = "HIGH"
+    elif stress_score > 0.4:
         level = "MEDIUM"
     else:
         level = "LOW"
@@ -45,5 +50,5 @@ def detect_stress(audio_path):
     return {
         "emotion_detected": emotion,
         "stress_level": level,
-        "stress_score": round(confidence, 2)
+        "stress_score": round(stress_score, 2)
     }

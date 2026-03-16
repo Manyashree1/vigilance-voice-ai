@@ -3,24 +3,29 @@ import librosa
 import numpy as np
 from transformers import AutoFeatureExtractor, AutoModelForAudioClassification
 
-# HuggingFace model
 MODEL = "garystafford/wav2vec2-deepfake-voice-detector"
 
-print("Loading deepfake detection model...")
+feature_extractor = None
+model = None
 
-# Load model once at server startup
-feature_extractor = AutoFeatureExtractor.from_pretrained(MODEL)
-model = AutoModelForAudioClassification.from_pretrained(MODEL)
 
-model.eval()
+def load_model():
+    global feature_extractor, model
 
-print("Model loaded successfully")
+    if model is None:
+        print("Loading deepfake detection model...")
+
+        feature_extractor = AutoFeatureExtractor.from_pretrained(MODEL)
+        model = AutoModelForAudioClassification.from_pretrained(MODEL)
+
+        model.eval()
+
+        print("Model loaded successfully")
 
 
 def detect_deepfake(audio_path: str):
     """
     Detect if voice is AI or Human
-
     Returns:
         label: "Fake" or "Real"
         confidence: percentage
@@ -28,9 +33,11 @@ def detect_deepfake(audio_path: str):
 
     try:
 
+        # Ensure model is loaded
+        load_model()
+
         print("Loading audio:", audio_path)
 
-        # Load audio (supports wav, mp3, m4a)
         wav, sr = librosa.load(audio_path, sr=16000, mono=True)
 
         if wav is None or len(wav) == 0:
@@ -38,17 +45,14 @@ def detect_deepfake(audio_path: str):
 
         print("Audio length:", len(wav) / 16000, "seconds")
 
-        # Normalize audio safely
         max_val = np.max(np.abs(wav))
         if max_val > 0:
             wav = wav / max_val
 
-        # Minimum 3 seconds required
         if len(wav) < 16000 * 3:
             print("Audio too short for detection")
             return "Audio Too Short", 0
 
-        # Extract features
         inputs = feature_extractor(
             wav,
             sampling_rate=16000,
@@ -56,7 +60,6 @@ def detect_deepfake(audio_path: str):
             padding=True
         )
 
-        # Run model
         with torch.no_grad():
             outputs = model(**inputs)
 

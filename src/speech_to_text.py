@@ -1,24 +1,33 @@
 from faster_whisper import WhisperModel
 
-# Force CPU to avoid the "cublas64_12.dll not found" error
-# int8 makes it run fast on your processor
-model = WhisperModel("base", device="cpu", compute_type="int8")
-
-def transcribe_audio(audio_path):
-    # beam_size=5 improves accuracy for different accents
-    segments, info = model.transcribe(audio_path, beam_size=5)
-
-    text = ""
 # Load model once
-model = WhisperModel("base", compute_type="int8")
+model = WhisperModel(
+    "large-v3",
+    device="cpu",
+    compute_type="int8"
+)
 
 def transcribe_audio(audio_path):
 
-    segments, info = model.transcribe(audio_path)
+    # Transcribe original language
+    segments, info = model.transcribe(
+        audio_path,
+        beam_size=5
+    )
 
-    text = ""
+    original_text = " ".join([seg.text for seg in segments]).strip()
 
-    for segment in segments:
-        text += segment.text + " "
+    # Translate to English
+    segments_en, _ = model.transcribe(
+        audio_path,
+        beam_size=5,
+        task="translate"
+    )
 
-    return text.strip()
+    english_text = " ".join([seg.text for seg in segments_en]).strip()
+
+    return {
+        "original_text": original_text,
+        "english_text": english_text,
+        "language": info.language
+    }
